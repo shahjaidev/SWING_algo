@@ -1,0 +1,58 @@
+$schema: https://componentsdk.azureedge.net/jsonschema/CommandComponent.json
+name: run_swing_aml_component
+version: 0.1.1
+display_name: run_swing_aml_component
+type: CommandComponent
+description: Module for running the Swing Algorithm on user-item interaction csv
+inputs:
+  train_csv:
+    type: path
+    optional: false
+  item_id_START:
+    type: Integer
+    description: Item ID START
+    default: 0
+  item_id_END:
+    type: Integer
+    description: Item ID END, default is -1 (all items)
+    default: -1
+  alpha:
+    type: Float
+    description: Alpha parameter for the Swing algorithm
+    default: 0.001
+
+outputs:
+  output_csv_path:
+    type: AnyFile
+  output_pickle_path:
+    type: AnyFile
+
+command: >-
+  python run_pipeline_swing.py
+  --train_csv {inputs.train_csv}
+  --item_id_START {inputs.item_id_START}
+  --item_id_END {inputs.item_id_END}
+  --alpha {inputs.alpha}
+  --output_csv_path {outputs.output_csv_path}
+  --output_pickle_path {outputs.output_pickle_path}
+
+environment:
+   conda:
+    conda_dependencies:
+      name: project_environment
+      channels:
+      - defaults
+      - conda-forge
+      - anaconda
+      dependencies:
+      - python=3.7
+      - pip=20.0
+      - pip:
+        - azureml-defaults==1.40.0
+        - azureml-dataprep==3.0.1
+        - pandas
+        - numpy
+        - scipy
+        - matplotlib
+        - networkx
+    os: Linux
